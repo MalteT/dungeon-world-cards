@@ -4,8 +4,8 @@ from json import dump, load
 from os.path import isfile
 import re
 
-MOVES_FILE = "moves.json"
 DATA_FILE = "data.json"
+MOVES_FILE = "moves.json"
 
 CARDS_OUTPUT = "cards.json"
 
@@ -21,6 +21,11 @@ def calculate_title_size(title):
     if len(title) > 20:
         return "12"
     return "13"
+
+# Return a list of existing classes
+def get_classes_list():
+    data = load(open(DATA_FILE))
+    return list(data["classes"].keys())
 
 # Add move cards
 def add_moves(cards):
@@ -76,9 +81,14 @@ def add_moves(cards):
             "ranger": "Waldläufer",
             "thief": "Dieb"
         }.get(classes, "Alle Klassen")
+
+    # Check existance of files
     if not isfile(MOVES_FILE):
         err(MOVES_FILE, "not found!")
+    if not isfile(DATA_FILE):
+        err(DATA_FILE, "not found!")
 
+    data = load(open(DATA_FILE))
     moves = load(open(MOVES_FILE))
 
     # If translations exist, load them
@@ -95,44 +105,207 @@ def add_moves(cards):
     else:
         desc_translations = {}
 
-    # Add all moves that have valid translations
-    for key, move in moves.items():
-        count = 1
+    # Add moves of all classes that have valid translations
+    class_moves = data["classes"]
+    for name, content in class_moves.items():
 
-        # If no class given, it's for all of them
-        # and there should be more than just one
-        if not "classes" in move:
-            move["classes"] = [ "all" ]
-            count = 5
+        # Add race moves
+        if "race_moves" in content:
+            for move in content["race_moves"]:
+                key = move["key"]
+                # If the title is translated, use translation
+                if key in title_translations:
+                    move["name"] = title_translations[key]
+                else:
+                    continue
+                # If the description is translated, use translation
+                if key in desc_translations:
+                    move["description"] = desc_translations[key]
+                else:
+                    continue
+                card = {
+                    "id": move["key"],
+                    "title": move["name"],
+                    "title_size": calculate_title_size(move["name"]),
+                    "count": 1,
+                    "icon": class_to_icon(name),
+                    "color": "DimGray",
+                    "contents": [
+                        "subtitle | " + class_to_name(name) + " (Rasse)",
+                        "rule"
+                    ] + format_move_description(move["description"])
+                }
+                # Add description
+                cards.append(card)
 
+        # Add starting moves
+        if "starting_moves" in content:
+            for move in content["starting_moves"]:
+                key = move["key"]
+                # If the title is translated, use translation
+                if key in title_translations:
+                    move["name"] = title_translations[key]
+                else:
+                    continue
+                # If the description is translated, use translation
+                if key in desc_translations:
+                    move["description"] = desc_translations[key]
+                else:
+                    continue
+                card = {
+                    "id": move["key"],
+                    "title": move["name"],
+                    "title_size": calculate_title_size(move["name"]),
+                    "count": 1,
+                    "icon": class_to_icon(name),
+                    "color": "DimGray",
+                    "contents": [
+                        "subtitle | " + class_to_name(name) + " (Level 0)",
+                        "rule"
+                    ] + format_move_description(move["description"])
+                }
+                # Add description
+                cards.append(card)
+
+        # Add advanced moves beginning at level 2
+        if "advanced_moves_1" in content:
+            for move in content["advanced_moves_1"]:
+                key = move["key"]
+                # If the title is translated, use translation
+                if key in title_translations:
+                    move["name"] = title_translations[key]
+                else:
+                    continue
+                # If the description is translated, use translation
+                if key in desc_translations:
+                    move["description"] = desc_translations[key]
+                else:
+                    continue
+                # Create card
+                card = {
+                    "id": move["key"],
+                    "title": move["name"],
+                    "title_size": calculate_title_size(move["name"]),
+                    "count": 1,
+                    "icon": class_to_icon(name),
+                    "color": "DimGray",
+                    "contents": [
+                        "subtitle | " + class_to_name(name) + " (Level 2)",
+                        "rule"
+                    ] + format_move_description(move["description"])
+                }
+                # Add requires/replaces information
+                if "replaces" in move:
+                    card["contents"] += [
+                        "fill",
+                        "rule",
+                        "property | Ersetzt | " + move["replaces"]
+                    ]
+                elif "requires" in move:
+                    card["contents"] += [
+                        "fill",
+                        "rule",
+                        "property | Benötigt | " + move["requires"]
+                    ]
+                cards.append(card)
+
+        # Add advanced moves beginning at level 6
+        if "advanced_moves_2" in content:
+            for move in content["advanced_moves_2"]:
+                key = move["key"]
+                # If the title is translated, use translation
+                if key in title_translations:
+                    move["name"] = title_translations[key]
+                else:
+                    continue
+                # If the description is translated, use translation
+                if key in desc_translations:
+                    move["description"] = desc_translations[key]
+                else:
+                    continue
+                # Create card
+                card = {
+                    "id": move["key"],
+                    "title": move["name"],
+                    "title_size": calculate_title_size(move["name"]),
+                    "count": 1,
+                    "icon": class_to_icon(name),
+                    "color": "DimGray",
+                    "contents": [
+                        "subtitle | " + class_to_name(name) + " (Level 6)",
+                        "rule"
+                    ] + format_move_description(move["description"])
+                }
+                # Add requires/replaces information
+                if "replaces" in move:
+                    card["contents"] += [
+                        "fill",
+                        "rule",
+                        "property | Ersetzt | " + move["replaces"]
+                    ]
+                elif "requires" in move:
+                    card["contents"] += [
+                        "fill",
+                        "rule",
+                        "property | Benötigt | " + move["requires"]
+                    ]
+                cards.append(card)
+
+    # Add all basic moves
+    basic_moves = data["basic_moves"]
+    for move in basic_moves:
+        key = move["key"]
         # If the title is translated, use translation
         if key in title_translations:
             move["name"] = title_translations[key]
         else:
             continue
-
         # If the description is translated, use translation
         if key in desc_translations:
             move["description"] = desc_translations[key]
         else:
             continue
+        card = {
+            "id": move["key"],
+            "title": move["name"],
+            "title_size": calculate_title_size(move["name"]),
+            "count": 5,
+            "icon": "artificial-intelligence",
+            "color": "DimGray",
+            "contents": [
+                "subtitle | Aktion",
+                "rule"
+            ] + format_move_description(move["description"])
+        }
+        cards.append(card)
 
-        # Add a card for every class specified
-        for name in move["classes"]:
-            card = {
-                "id": key,
-                "title": move["name"],
-                "title_size": calculate_title_size(move["name"]),
-                "count": count,
-                "icon": class_to_icon(name),
-                "color": "DimGray",
-                "contents": [
-                    "subtitle | " + class_to_name(name),
-                    "rule"
-                ] + format_move_description(move["description"])
-            }
-            # Add description
-            cards.append(card)
+    # Add all special moves
+    special_moves = data["special_moves"]
+    for move in special_moves:
+        key = move["key"]
+        # If the title is translated, use translation
+        if key in title_translations:
+            move["name"] = title_translations[key]
+        else:
+            continue
+        # If the description is translated, use translation
+        if key in desc_translations:
+            move["description"] = desc_translations[key]
+        else:
+            continue
+        card = {
+            "id": move["key"],
+            "title": move["name"],
+            "title_size": calculate_title_size(move["name"]),
+            "count": 5,
+            "icon": "artificial-intelligence",
+            "color": "DimGray",
+            "contents": [
+                "subtitle | Spezial-Aktion",
+                "rule"
+            ] + format_move_description(move["description"])
+        }
+        cards.append(card)
 
 cards = []
 add_moves(cards)
