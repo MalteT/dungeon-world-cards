@@ -5,10 +5,14 @@ from os.path import isfile
 import re
 
 MOVES_FILE = "moves.json"
+DATA_FILE = "data.json"
+
+CARDS_OUTPUT = "cards.json"
 
 def err(message):
     print(message)
 
+# Calculate the title size for a given title
 def calculate_title_size(title):
     if len(title) > 25:
         return "10"
@@ -18,60 +22,60 @@ def calculate_title_size(title):
         return "12"
     return "13"
 
-def format_move_description(description):
-    lines = description.split('\n')
+# Add move cards
+def add_moves(cards):
 
-    def prefix(line):
-        if line.startswith("- "):
-            return "bullet | " + line[2:]
-        elif line.startswith("-> "):
-            return "bullet | " + line[3:]
-        elif line.startswith("Wirf"):
-            return "section | " + line
-        else:
-            return "text | " + line
+    # Format move description according to some rules
+    def format_move_description(description):
+        lines = description.split('\n')
+        def prefix(line):
+            if line.startswith("- "):
+                return "bullet | " + line[2:]
+            elif line.startswith("-> "):
+                return "bullet | " + line[3:]
+            elif line.startswith("Wirf"):
+                return "section | " + line
+            else:
+                return "text | " + line
+        lines = map(prefix, lines)
+        final = []
+        for line in lines:
+            if line.startswith("section | Wirf"):
+                final.append("fill")
+            # Replace ** with <b>
+            line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", line)
+            # Bold 10+, 7-9, ...
+            line = re.sub(r"Bei ([0-9]+[\+-][0-9]*)", r"Bei <b>\1</b>", line)
+            # Italic dice and number
+            line = re.sub(r"([\+-]?[0-9]+(w[0-9]+)?[\+-]?)", r"<i>\1</i>", line)
+            final.append(line)
+        return list(final)
 
-    lines = map(prefix, lines)
+    # Translate a class to an icon
+    def class_to_icon(classes):
+        return {
+            "bard": "class-bard",
+            "wizard": "class-wizard",
+            "paladin": "class-paladin",
+            "cleric": "class-cleric",
+            "druid": "class-druid",
+            "fighter": "class-fighter",
+            "ranger": "class-ranger",
+            "thief": "class-rogue"
+        }.get(classes, "artificial-intelligence")
 
-    final = []
-    for line in lines:
-        if line.startswith("section | Wirf"):
-            final.append("fill")
-        # Replace ** with <b>
-        line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", line)
-        # Bold 10+, 7-9, ...
-        line = re.sub(r"Bei ([0-9]+[\+-][0-9]*)", r"Bei <b>\1</b>", line)
-        # Italic dice and number
-        line = re.sub(r"([\+-]?[0-9]+(w[0-9]+)?[\+-]?)", r"<i>\1</i>", line)
-        final.append(line)
-
-    return list(final)
-
-def class_to_icon(classes):
-    return {
-        "bard": "class-bard",
-        "wizard": "class-wizard",
-        "paladin": "class-paladin",
-        "cleric": "class-cleric",
-        "druid": "class-druid",
-        "fighter": "class-fighter",
-        "ranger": "class-ranger",
-        "thief": "class-rogue"
-    }.get(classes, "artificial-intelligence")
-
-def class_to_name(classes):
-    return {
-        "bard": "Barde",
-        "wizard": "Zauberer",
-        "paladin": "Paladin",
-        "cleric": "Kleriker",
-        "druid": "Druide",
-        "fighter": "Krieger",
-        "ranger": "Waldläufer",
-        "thief": "Dieb"
-    }.get(classes, "Alle Klassen")
-
-def add_moves(cards, data):
+    # Translate a class id to a name
+    def class_to_name(classes):
+        return {
+            "bard": "Barde",
+            "wizard": "Zauberer",
+            "paladin": "Paladin",
+            "cleric": "Kleriker",
+            "druid": "Druide",
+            "fighter": "Krieger",
+            "ranger": "Waldläufer",
+            "thief": "Dieb"
+        }.get(classes, "Alle Klassen")
     if not isfile(MOVES_FILE):
         err(MOVES_FILE, "not found!")
 
@@ -91,7 +95,7 @@ def add_moves(cards, data):
     else:
         desc_translations = {}
 
-    # Add all moves
+    # Add all moves that have valid translations
     for key, move in moves.items():
         count = 1
 
@@ -130,12 +134,8 @@ def add_moves(cards, data):
             # Add description
             cards.append(card)
 
-
-data_file = open("data.json", "r")
-data = load(data_file)
-
 cards = []
-add_moves(cards, data)
+add_moves(cards)
 
-card_file = open("cards.json", "w")
+card_file = open(CARDS_OUTPUT, "w")
 dump(cards, card_file)

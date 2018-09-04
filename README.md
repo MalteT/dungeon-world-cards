@@ -1,3 +1,8 @@
+![Aktionen](https://img.shields.io/badge/Aktionen-17%25-orange.svg)
+![Equipment](https://img.shields.io/badge/Equipment-0%25-red.svg)
+![Zaubersprüche](https://img.shields.io/badge/Zauberspr%C3%BCche-0%25-red.svg)
+![Monster](https://img.shields.io/badge/Monster-0%25-red.svg)
+
 # Dungeon World Karten
 ![Example](example/example-card.png)
 
@@ -16,3 +21,9 @@ Interaktiv Übersetzungen für Titel hinzufügen.
 
 #### translate_description.py
 Interaktiv Übersetzungen für Beschreibungen hinzufügen.
+
+## Danksagungen
+
+Daten kommen von [DungeonWorldData](https://github.com/Vindexus/DungeonWorldData), vielen Dank an [Vindexus](https://github.com/Vindexus).
+
+Das Originalspiel [Dungeon World](http://www.dungeon-world.com/) ist Grundlage für diese Karten, vielen Dank an [Sage LaTorra](http://www.latorra.org/) und [Adam Koebel](https://www.adam-koebel.com/).
