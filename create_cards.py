@@ -13,6 +13,7 @@ def err(message):
     print(message)
 
 # Calculate the title size for a given title
+# TODO Could use some improvements
 def calculate_title_size(title):
     if len(title) > 25:
         return "10"
@@ -21,11 +22,6 @@ def calculate_title_size(title):
     if len(title) > 20:
         return "12"
     return "13"
-
-# Return a list of existing classes
-def get_classes_list():
-    data = load(open(DATA_FILE))
-    return list(data["classes"].keys())
 
 # Add move cards
 def add_moves(cards):
@@ -82,6 +78,21 @@ def add_moves(cards):
             "thief": "Dieb"
         }.get(classes, "Alle Klassen")
 
+    # Extract and translate move identified by key
+    def key_to_move(key, title_translations, desc_translations, move_data):
+        move = move_data[key]
+        # If the title is translated, use translation
+        if key in title_translations:
+            move["name"] = title_translations[key]
+        else:
+            return False
+        # If the description is translated, use translation
+        if key in desc_translations:
+            move["description"] = desc_translations[key]
+        else:
+            return False
+        return move
+
     # Check existance of files
     if not isfile(MOVES_FILE):
         err(MOVES_FILE, "not found!")
@@ -92,18 +103,16 @@ def add_moves(cards):
     moves = load(open(MOVES_FILE))
 
     # If translations exist, load them
+    title_translations = {}
+    desc_translations = {}
     if isfile("title_translations.json"):
         title_translations = load(open("title_translations.json"))
         anz = len(title_translations)
         print("Übersetzungen (Titel): %d -> %.2f%% " % (anz , 100.0 * anz / len(moves)))
-    else:
-        title_translations = {}
     if isfile("description_translations.json"):
         desc_translations = load(open("description_translations.json"))
         anz = len(desc_translations)
         print("Übersetzungen (Beschreibung): %d -> %.2f%% " % (anz , 100.0 * anz / len(moves)))
-    else:
-        desc_translations = {}
 
     # Add moves of all classes that have valid translations
     class_moves = data["classes"]
@@ -113,18 +122,11 @@ def add_moves(cards):
         if "race_moves" in content:
             for move in content["race_moves"]:
                 key = move["key"]
-                # If the title is translated, use translation
-                if key in title_translations:
-                    move["name"] = title_translations[key]
-                else:
-                    continue
-                # If the description is translated, use translation
-                if key in desc_translations:
-                    move["description"] = desc_translations[key]
-                else:
+                move = key_to_move(key, title_translations, desc_translations, moves)
+                if not move:
                     continue
                 card = {
-                    "id": move["key"],
+                    "id": key,
                     "title": move["name"],
                     "title_size": calculate_title_size(move["name"]),
                     "count": 1,
@@ -142,18 +144,11 @@ def add_moves(cards):
         if "starting_moves" in content:
             for move in content["starting_moves"]:
                 key = move["key"]
-                # If the title is translated, use translation
-                if key in title_translations:
-                    move["name"] = title_translations[key]
-                else:
-                    continue
-                # If the description is translated, use translation
-                if key in desc_translations:
-                    move["description"] = desc_translations[key]
-                else:
+                move = key_to_move(key, title_translations, desc_translations, moves)
+                if not move:
                     continue
                 card = {
-                    "id": move["key"],
+                    "id": key,
                     "title": move["name"],
                     "title_size": calculate_title_size(move["name"]),
                     "count": 1,
@@ -171,19 +166,12 @@ def add_moves(cards):
         if "advanced_moves_1" in content:
             for move in content["advanced_moves_1"]:
                 key = move["key"]
-                # If the title is translated, use translation
-                if key in title_translations:
-                    move["name"] = title_translations[key]
-                else:
-                    continue
-                # If the description is translated, use translation
-                if key in desc_translations:
-                    move["description"] = desc_translations[key]
-                else:
+                move = key_to_move(key, title_translations, desc_translations, moves)
+                if not move:
                     continue
                 # Create card
                 card = {
-                    "id": move["key"],
+                    "id": key,
                     "title": move["name"],
                     "title_size": calculate_title_size(move["name"]),
                     "count": 1,
@@ -196,16 +184,24 @@ def add_moves(cards):
                 }
                 # Add requires/replaces information
                 if "replaces" in move:
+                    repl_key = move["replaces"]
+                    repl_move = key_to_move(repl_key, title_translations, desc_translations, moves)
+                    if not repl_move:
+                        repl_move = { "name": "To be translated" }
                     card["contents"] += [
                         "fill",
                         "rule",
-                        "property | Ersetzt | " + move["replaces"]
+                        "property | Ersetzt | " + repl_move["name"]
                     ]
                 elif "requires" in move:
+                    requ_key = move["requires"]
+                    requ_move = key_to_move(requ_key, title_translations, desc_translations, moves)
+                    if not requ_move:
+                        requ_move = { "name": "To be translated" }
                     card["contents"] += [
                         "fill",
                         "rule",
-                        "property | Benötigt | " + move["requires"]
+                        "property | Benötigt | " + requ_move["name"]
                     ]
                 cards.append(card)
 
@@ -213,19 +209,12 @@ def add_moves(cards):
         if "advanced_moves_2" in content:
             for move in content["advanced_moves_2"]:
                 key = move["key"]
-                # If the title is translated, use translation
-                if key in title_translations:
-                    move["name"] = title_translations[key]
-                else:
-                    continue
-                # If the description is translated, use translation
-                if key in desc_translations:
-                    move["description"] = desc_translations[key]
-                else:
+                move = key_to_move(key, title_translations, desc_translations, moves)
+                if not move:
                     continue
                 # Create card
                 card = {
-                    "id": move["key"],
+                    "id": key,
                     "title": move["name"],
                     "title_size": calculate_title_size(move["name"]),
                     "count": 1,
@@ -238,16 +227,24 @@ def add_moves(cards):
                 }
                 # Add requires/replaces information
                 if "replaces" in move:
+                    repl_key = move["replaces"]
+                    repl_move = key_to_move(repl_key, title_translations, desc_translations, moves)
+                    if not repl_move:
+                        repl_move = { "name": "To be translated" }
                     card["contents"] += [
                         "fill",
                         "rule",
-                        "property | Ersetzt | " + move["replaces"]
+                        "property | Ersetzt | " + repl_move["name"]
                     ]
                 elif "requires" in move:
+                    requ_key = move["requires"]
+                    requ_move = key_to_move(requ_key, title_translations, desc_translations, moves)
+                    if not requ_move:
+                        requ_move = { "name": "To be translated" }
                     card["contents"] += [
                         "fill",
                         "rule",
-                        "property | Benötigt | " + move["requires"]
+                        "property | Benötigt | " + requ_move["name"]
                     ]
                 cards.append(card)
 
