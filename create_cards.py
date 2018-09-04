@@ -9,6 +9,15 @@ MOVES_FILE = "moves.json"
 def err(message):
     print(message)
 
+def calculate_title_size(title):
+    if len(title) > 25:
+        return "10"
+    if len(title) > 22:
+        return "11"
+    if len(title) > 20:
+        return "12"
+    return "13"
+
 def format_move_description(description):
     lines = description.split('\n')
 
@@ -17,7 +26,7 @@ def format_move_description(description):
             return "bullet | " + line[2:]
         elif line.startswith("-> "):
             return "bullet | " + line[3:]
-        elif line.startswith("Wirf+"):
+        elif line.startswith("Wirf"):
             return "section | " + line
         else:
             return "text | " + line
@@ -60,7 +69,7 @@ def class_to_name(classes):
         "fighter": "Krieger",
         "ranger": "Waldläufer",
         "thief": "Dieb"
-    }.get(classes, "Alle")
+    }.get(classes, "Alle Klassen")
 
 def add_moves(cards, data):
     if not isfile(MOVES_FILE):
@@ -71,10 +80,14 @@ def add_moves(cards, data):
     # If translations exist, load them
     if isfile("title_translations.json"):
         title_translations = load(open("title_translations.json"))
+        anz = len(title_translations)
+        print("Übersetzungen (Titel): %d -> %.2f%% " % (anz , 100.0 * anz / len(moves)))
     else:
         title_translations = {}
     if isfile("description_translations.json"):
         desc_translations = load(open("description_translations.json"))
+        anz = len(desc_translations)
+        print("Übersetzungen (Beschreibung): %d -> %.2f%% " % (anz , 100.0 * anz / len(moves)))
     else:
         desc_translations = {}
 
@@ -91,19 +104,24 @@ def add_moves(cards, data):
         # If the title is translated, use translation
         if key in title_translations:
             move["name"] = title_translations[key]
+        else:
+            continue
 
         # If the description is translated, use translation
         if key in desc_translations:
             move["description"] = desc_translations[key]
+        else:
+            continue
 
         # Add a card for every class specified
         for name in move["classes"]:
             card = {
                 "id": key,
                 "title": move["name"],
+                "title_size": calculate_title_size(move["name"]),
                 "count": count,
                 "icon": class_to_icon(name),
-                "color": "Teal",
+                "color": "DimGray",
                 "contents": [
                     "subtitle | " + class_to_name(name),
                     "rule"
