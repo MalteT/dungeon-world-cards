@@ -12,15 +12,26 @@
 
 #### create_cards.py
 Erstellen von cards.json, welche auf [RPG-Cards](https://crobi.github.io/rpg-cards/generator/generate.html) hochgeladen werden kann.
-Es werden bisher __nur Aktionskarten__ erstellt!
 Es werden nur Karten erstellt für welche sowohl ein übersetzter Titel in [title_translations.json](title_translations.json) als auch eine übersetzte
 Beschreibung in [description_translations.json](description_translations.json) zur Verfügung steht.
 
 #### translate_title.py
-Interaktiv Übersetzungen für Titel hinzufügen.
+Interaktiv Übersetzungen für Titel von Aktionen hinzufügen.
+
+Titel sollten nicht zu lang sein und nicht eins zu eins übersetzt werden.
 
 #### translate_description.py
-Interaktiv Übersetzungen für Beschreibungen hinzufügen.
+Interaktiv Übersetzungen für Beschreibungen von Aktionen hinzufügen.
+
+Beschreibungen sollten einigen Richtlinien folgen.
+
+- Stichpunkte sind Zeilen die mit `- ` beginnen und werden später als solcher dargestellt
+- Würfelergebnisse sollten in einzelnen Zeilen stehen und mit `-> Bei 10+ ...` beginnen.
+  `On a miss` sollte zu `-> Bei Fehlschlag ...` übersetzt werden.
+- Würfe sollten in einer neuen Zeile stehen und mit `Wirf` beginnen. (Zum Beispiel `Wirf+KON`) Dies wird dann zu einer `section` geändert,
+  welche sich am Boden der Karte befindet. Nach dieser `section` sollten alle Ausgangsergebnisse folgen.
+- Hat die Aktion einen Auslöser so sollte dieser in ** eingefasst werden (Zum Beispiel `Wenn du **die Richtlinien für Übersetzungen verfasst**, dann...`)
+- Zahlen und Würfelergebnisse werden später kursiv dargestellt.
 
 ## Danksagungen
 
