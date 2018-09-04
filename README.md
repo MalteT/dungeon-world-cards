@@ -27,3 +27,5 @@ Interaktiv Übersetzungen für Beschreibungen hinzufügen.
 Daten kommen von [DungeonWorldData](https://github.com/Vindexus/DungeonWorldData), vielen Dank an [Vindexus](https://github.com/Vindexus).
 
 Das Originalspiel [Dungeon World](http://www.dungeon-world.com/) ist Grundlage für diese Karten, vielen Dank an [Sage LaTorra](http://www.latorra.org/) und [Adam Koebel](https://www.adam-koebel.com/).
+
+Die Karten werden mit [RPG-Cards](https://github.com/crobi/rpg-cards) erstellt, vielen Dank dafür!
