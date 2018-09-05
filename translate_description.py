@@ -2,6 +2,7 @@
 
 from json import dump, load
 from os.path import isfile
+from subprocess import run
 import sys
 
 class colors:
@@ -20,26 +21,35 @@ def save(obj, f):
     dump(obj, f)
 
 def translate(translations, key, move):
-    print()
-    print("==============================================")
-    print("ID:          ", key)
-    print("TITLE:       ", move["name"])
-    if "classes" in move:
-        print("CLASSES:     ", ", ".join(move["classes"]))
-    print("----------------------------------------------")
-    print("Beschreibung:\n---\n", move["description"], "\n---\n", sep='')
-    print("Übersetzung:")
-    lines = []
-    while True:
-        try:
-            line = input()
-        except EOFError:
-            break
-        lines.append(line)
-    print("==============================================")
-    if len(lines) > 0:
-        translations[key] = "\n".join(lines)
-        return True
+    temp_file = "/tmp/" + key
+    temp = open(temp_file, "w")
+    print("# Übersetzung oben eingeben.",
+          "# Ohne Eingabe wird die Übersetzung abgebrochen.",
+          "# ",
+          "# ================================================================================",
+          "# ID:          %s" % key,
+          "# TITLE:       %s" % move["name"],
+          "# CLASSES:     %s" % ", ".join(move["classes"]) if "classes" in move else "All classes",
+          "# -- Zu Übersetzen ---------------------------------------------------------------",
+          "# %s" % move["description"].replace("\n", "\n# "),
+          "# --------------------------------------------------------------------------------",
+          "# ================================================================================",
+          sep="\n",
+          file=temp)
+    temp.flush()
+    temp.close()
+    proc = run(["$VISUAL %s" % temp_file], shell=True)
+    if proc.returncode == 0:
+        lines = []
+        temp = open(temp_file)
+        for line in temp.readlines():
+            if not line.startswith("#"):
+                print(line, end="")
+                lines.append(line)
+        temp.close()
+        if len(lines) > 0 and lines[0] != "":
+            translations[key] = "\n".join(lines)
+            return True
     return False
 
 data_file = open("data.json", "r")
