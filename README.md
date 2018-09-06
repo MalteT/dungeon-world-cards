@@ -1,4 +1,4 @@
-![Aktionen](https://img.shields.io/badge/Aktionen-51.11%25-yellow.svg)
+![Aktionen](https://img.shields.io/badge/Aktionen-65.78%25-yellowgreen.svg)
 ![Equipment](https://img.shields.io/badge/Equipment-0%25-red.svg)
 ![Zaubersprüche](https://img.shields.io/badge/Zauberspr%C3%BCche-0%25-red.svg)
 ![Monster](https://img.shields.io/badge/Monster-0%25-red.svg)
