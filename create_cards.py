@@ -312,4 +312,4 @@ cards = []
 add_moves(cards)
 
 card_file = open(CARDS_OUTPUT, "w")
-dump(cards, card_file)
+dump(cards, card_file, sort_keys=True, indent=4)

@@ -17,7 +17,7 @@ class colors:
 
 def save(obj, f):
     f = open(f, "w")
-    dump(obj, f)
+    dump(obj, f, sort_keys=True, indent=4)
 
 def translate(translations, key, move):
     print()
