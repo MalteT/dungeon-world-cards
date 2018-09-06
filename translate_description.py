@@ -44,7 +44,8 @@ def translate(translations, key, move):
         temp = open(temp_file)
         for line in temp.readlines():
             if not line.startswith("#"):
-                print(line, end="")
+                line = line.strip()
+                print(line)
                 lines.append(line)
         temp.close()
         if len(lines) > 0 and lines[0] != "":

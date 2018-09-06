@@ -26,73 +26,6 @@ def calculate_title_size(title):
 # Add move cards
 def add_moves(cards):
 
-    # Format move description according to some rules
-    def format_move_description(description):
-        lines = description.split('\n')
-        def prefix(line):
-            if line.startswith("- "):
-                return "bullet | " + line[2:]
-            elif line.startswith("-> "):
-                return "bullet | " + line[3:]
-            elif line.startswith("Wirf"):
-                return "section | " + line
-            else:
-                return "text | " + line
-        lines = map(prefix, lines)
-        final = []
-        for line in lines:
-            if line.startswith("section | Wirf"):
-                final.append("fill")
-            # Replace ** with <b>
-            line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", line)
-            # Bold 10+, 7-9, ...
-            line = re.sub(r"Bei ([0-9]+[\+-][0-9]*)", r"Bei <b>\1</b>", line)
-            # Italic dice and number
-            line = re.sub(r"([\+-]?[0-9]+(w[0-9]+)?[\+-]?)", r"<i>\1</i>", line)
-            final.append(line)
-        return list(final)
-
-    # Translate a class to an icon
-    def class_to_icon(classes):
-        return {
-            "bard": "class-bard",
-            "wizard": "class-wizard",
-            "paladin": "class-paladin",
-            "cleric": "class-cleric",
-            "druid": "class-druid",
-            "fighter": "class-fighter",
-            "ranger": "class-ranger",
-            "thief": "class-rogue"
-        }.get(classes, "artificial-intelligence")
-
-    # Translate a class id to a name
-    def class_to_name(classes):
-        return {
-            "bard": "Barde",
-            "wizard": "Zauberer",
-            "paladin": "Paladin",
-            "cleric": "Kleriker",
-            "druid": "Druide",
-            "fighter": "Krieger",
-            "ranger": "Waldläufer",
-            "thief": "Dieb"
-        }.get(classes, "Alle Klassen")
-
-    # Extract and translate move identified by key
-    def key_to_move(key, title_translations, desc_translations, move_data):
-        move = move_data[key]
-        # If the title is translated, use translation
-        if key in title_translations:
-            move["name"] = title_translations[key]
-        else:
-            return False
-        # If the description is translated, use translation
-        if key in desc_translations:
-            move["description"] = desc_translations[key]
-        else:
-            return False
-        return move
-
     # Check existance of files
     if not isfile(MOVES_FILE):
         err(MOVES_FILE, "not found!")
@@ -114,6 +47,77 @@ def add_moves(cards):
         anz = len(desc_translations)
         print("Übersetzungen (Beschreibung): %d -> %.2f%% " % (anz , 100.0 * anz / len(moves)))
 
+    # Format move description according to some rules
+    def format_move_description(description):
+        lines = description.split('\n')
+        def prefix(line):
+            if line.startswith("- "):
+                return "bullet | " + line[2:]
+            elif line.startswith("-> "):
+                return "bullet | " + line[3:]
+            elif line.startswith("Wirf"):
+                return "section | " + line
+            else:
+                return "text | " + line
+        lines = map(prefix, lines)
+        final = []
+        for line in lines:
+            if line.startswith("section | Wirf"):
+                final.append("fill")
+            # Replace id(move_id) with the name of move_id
+            line = re.sub(r"id\((.*?)\)",
+                          lambda match: key_to_move(match.group(1))["name"],
+                          line)
+            # Replace ** with <b>
+            line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", line)
+            # Bold 10+, 7-9, ...
+            line = re.sub(r"Bei ([0-9]+[\+-][0-9]*)", r"Bei <b>\1</b>", line)
+            # Italic dice and number
+            line = re.sub(r"([\+-]?[0-9]+(w[0-9]+)?[\+-]?)", r"<i>\1</i>", line)
+            final.append(line)
+        return list(final)
+
+    # Translate a class to an icon
+    def class_to_icon(cl):
+        return {
+            "bard": "class-bard",
+            "wizard": "class-wizard",
+            "paladin": "class-paladin",
+            "cleric": "class-cleric",
+            "druid": "class-druid",
+            "fighter": "class-fighter",
+            "ranger": "class-ranger",
+            "thief": "class-rogue"
+        }.get(cl, "artificial-intelligence")
+
+    # Translate a class id to a name
+    def class_to_name(cl):
+        return {
+            "bard": "Barde",
+            "wizard": "Zauberer",
+            "paladin": "Paladin",
+            "cleric": "Kleriker",
+            "druid": "Druide",
+            "fighter": "Krieger",
+            "ranger": "Waldläufer",
+            "thief": "Dieb"
+        }.get(cl, "Alle Klassen")
+
+    # Extract and translate move identified by key
+    def key_to_move(key):
+        move = moves[key]
+        # If the title is translated, use translation
+        if key in title_translations:
+            move["name"] = title_translations[key]
+        else:
+            return False
+        # If the description is translated, use translation
+        if key in desc_translations:
+            move["description"] = desc_translations[key]
+        else:
+            return False
+        return move
+
     # Add moves of all classes that have valid translations
     class_moves = data["classes"]
     for name, content in class_moves.items():
@@ -122,7 +126,7 @@ def add_moves(cards):
         if "race_moves" in content:
             for move in content["race_moves"]:
                 key = move["key"]
-                move = key_to_move(key, title_translations, desc_translations, moves)
+                move = key_to_move(key)
                 if not move:
                     continue
                 card = {
@@ -144,7 +148,7 @@ def add_moves(cards):
         if "starting_moves" in content:
             for move in content["starting_moves"]:
                 key = move["key"]
-                move = key_to_move(key, title_translations, desc_translations, moves)
+                move = key_to_move(key)
                 if not move:
                     continue
                 card = {
@@ -166,7 +170,7 @@ def add_moves(cards):
         if "advanced_moves_1" in content:
             for move in content["advanced_moves_1"]:
                 key = move["key"]
-                move = key_to_move(key, title_translations, desc_translations, moves)
+                move = key_to_move(key)
                 if not move:
                     continue
                 # Create card
@@ -185,7 +189,7 @@ def add_moves(cards):
                 # Add requires/replaces information
                 if "replaces" in move:
                     repl_key = move["replaces"]
-                    repl_move = key_to_move(repl_key, title_translations, desc_translations, moves)
+                    repl_move = key_to_move(repl_key)
                     if not repl_move:
                         repl_move = { "name": "To be translated" }
                     card["contents"] += [
@@ -195,7 +199,7 @@ def add_moves(cards):
                     ]
                 elif "requires" in move:
                     requ_key = move["requires"]
-                    requ_move = key_to_move(requ_key, title_translations, desc_translations, moves)
+                    requ_move = key_to_move(requ_key)
                     if not requ_move:
                         requ_move = { "name": "To be translated" }
                     card["contents"] += [
@@ -209,7 +213,7 @@ def add_moves(cards):
         if "advanced_moves_2" in content:
             for move in content["advanced_moves_2"]:
                 key = move["key"]
-                move = key_to_move(key, title_translations, desc_translations, moves)
+                move = key_to_move(key)
                 if not move:
                     continue
                 # Create card
@@ -228,7 +232,7 @@ def add_moves(cards):
                 # Add requires/replaces information
                 if "replaces" in move:
                     repl_key = move["replaces"]
-                    repl_move = key_to_move(repl_key, title_translations, desc_translations, moves)
+                    repl_move = key_to_move(repl_key)
                     if not repl_move:
                         repl_move = { "name": "To be translated" }
                     card["contents"] += [
@@ -238,7 +242,7 @@ def add_moves(cards):
                     ]
                 elif "requires" in move:
                     requ_key = move["requires"]
-                    requ_move = key_to_move(requ_key, title_translations, desc_translations, moves)
+                    requ_move = key_to_move(requ_key)
                     if not requ_move:
                         requ_move = { "name": "To be translated" }
                     card["contents"] += [
