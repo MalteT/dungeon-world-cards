@@ -66,10 +66,12 @@ def add_moves(cards):
                 final.append("fill")
             # Replace id(move_id) with the name of move_id
             line = re.sub(r"id\((.*?)\)",
-                          lambda match: key_to_move(match.group(1))["name"],
+                          lambda match: "<span style='text-decoration: underline'>%s</span>" % key_to_move(match.group(1))["name"],
                           line)
             # Replace ** with <b>
             line = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", line)
+            # Make head :: tail into a property
+            line = re.sub(r"text \| (.*?) :: (.*?)", r"property | \1 | \2", line)
             # Bold 10+, 7-9, ...
             line = re.sub(r"Bei ([0-9]+[\+-][0-9]*)", r"Bei <b>\1</b>", line)
             # Italic dice and number
