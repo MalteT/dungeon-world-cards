@@ -132,11 +132,9 @@ def class_to_name(cl):
         "thief": "Dieb"
     }.get(cl, "Alle Klassen")
 
-# Add all moves relevant to a single class.
-def add_moves_from_class(cards, cl):
-    # Content of the given class
+# Add race moves from the given class
+def add_race_moves_from_class(cards, cl):
     content = data["classes"][cl]
-    # Add race moves
     if "race_moves" in content:
         for move in content["race_moves"]:
             key = move["key"]
@@ -156,8 +154,9 @@ def add_moves_from_class(cards, cl):
                 ] + format_move_description(move["description"])
             }
             cards.append(card)
-
-    # Add starting moves
+# Add starting moves from the given class
+def add_starting_moves_from_class(cards, cl):
+    content = data["classes"][cl]
     if "starting_moves" in content:
         for move in content["starting_moves"]:
             key = move["key"]
@@ -178,6 +177,9 @@ def add_moves_from_class(cards, cl):
             }
             cards.append(card)
 
+# Add advanced moves from the given class
+def add_advanced_moves_from_class(cards, cl):
+    content = data["classes"][cl]
     # Add advanced moves beginning at level 2
     if "advanced_moves_1" in content:
         for move in content["advanced_moves_1"]:
@@ -220,7 +222,6 @@ def add_moves_from_class(cards, cl):
                     "property | Benötigt | " + requ_move["name"]
                 ]
             cards.append(card)
-
     # Add advanced moves beginning at level 6
     if "advanced_moves_2" in content:
         for move in content["advanced_moves_2"]:
@@ -263,8 +264,8 @@ def add_moves_from_class(cards, cl):
                     "property | Benötigt | " + requ_move["name"]
                 ]
             cards.append(card)
-
-    # Add all basic moves
+# Add basic moves
+def add_basic_moves(cards, cl):
     basic_moves = data["basic_moves"]
     for move in basic_moves:
         key = move["key"]
@@ -292,7 +293,8 @@ def add_moves_from_class(cards, cl):
         }
         cards.append(card)
 
-    # Add all special moves
+# Add special moves
+def add_special_moves(cards, cl):
     special_moves = data["special_moves"]
     for move in special_moves:
         key = move["key"]
@@ -319,6 +321,57 @@ def add_moves_from_class(cards, cl):
             ] + format_move_description(move["description"])
         }
         cards.append(card)
+# Format wizard spell level
+def format_wizard_spell_level(lvl):
+    if lvl == "cantrip":
+        return "Streich"
+    return "Level %d" % lvl
+# Add wizard spells
+def add_wizard_spells(cards):
+    spells = data["classes"]["wizard"]["spells"]
+    translations_file = open("spell_translations.json")
+    translations = load(translations_file)
+    for key, spell in spells.items():
+        # Translation stuff
+        if key in translations["names"]:
+            spell["name"] = translations["names"][key]
+            if key in translations["descriptions"]:
+                spell["descriptions"] = translations["descriptions"][key]
+        tags = []
+        if "tags" in spell:
+            for tag in spell["tags"]:
+                if tag in translations["tags"]:
+                    tag = translations["tags"][tag]
+                tags.append("bullet | %s" % tag)
+            if len(tags) > 0:
+                tags = [
+                    "fill",
+                    "section | Tags"
+                ] + tags
+        # Card adding stuff
+        card = {
+            "id": key,
+            "title": spell["name"],
+            "title_size": calculate_title_size(spell["name"]),
+            "count": 1,
+            "icon": "spell-book",
+            "color": "Indigo",
+            "contents": [
+                "subtitle | " + format_wizard_spell_level(spell["level"]),
+                "rule",
+                "text | " + spell["description"]
+            ] + tags
+        }
+        cards.append(card)
+# Add all moves relevant to a single class.
+def add_moves_from_class(cards, cl):
+    add_race_moves_from_class(cards, cl)
+    add_starting_moves_from_class(cards, cl)
+    add_advanced_moves_from_class(cards, cl)
+    add_basic_moves(cards, cl)
+    add_special_moves(cards, cl)
+    if cl == "wizard":
+        add_wizard_spells(cards)
 
 
 
