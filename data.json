@@ -601,6 +601,14 @@
                 "druid"
             ]
         },
+        "healthy_distrust": {
+            "name": "Healthy Distrust",
+            "key": "healthy_distrust",
+            "description": "Whenever the unclean magic wielded by mortal men causes you to Defy Danger, treat any result of 6- as a 7-9",
+            "classes": [
+                "druid"
+            ]
+        },
         "stalkers_sister": {
             "name": "Stalker’s Sister",
             "key": "stalkers_sister",
@@ -3046,6 +3054,14 @@
                     "key": "world_talker",
                     "requires": "thing_talker",
                     "description": "You see the patterns that make up the fabric of the world. You may now apply your spirit tongue, shapeshifter and studied essence moves to pure elements—fire, water, air and earth.",
+                    "classes": [
+                        "druid"
+                    ]
+                },
+                {
+                    "name": "Healthy Distrust",
+                    "key": "healthy_distrust",
+                    "description": "Whenever the unclean magic wielded by mortal men causes you to Defy Danger, treat any result of 6- as a 7-9",
                     "classes": [
                         "druid"
                     ]
@@ -6483,6 +6499,14 @@
                     "key": "world_talker",
                     "requires": "thing_talker",
                     "description": "You see the patterns that make up the fabric of the world. You may now apply your spirit tongue, shapeshifter and studied essence moves to pure elements—fire, water, air and earth.",
+                    "classes": [
+                        "druid"
+                    ]
+                },
+                {
+                    "name": "Healthy Distrust",
+                    "key": "healthy_distrust",
+                    "description": "Whenever the unclean magic wielded by mortal men causes you to Defy Danger, treat any result of 6- as a 7-9",
                     "classes": [
                         "druid"
                     ]
@@ -14193,6 +14217,14 @@
         "key": "world_talker",
         "requires": "thing_talker",
         "description": "You see the patterns that make up the fabric of the world. You may now apply your spirit tongue, shapeshifter and studied essence moves to pure elements—fire, water, air and earth.",
+        "classes": [
+            "druid"
+        ]
+    },
+    "healthy_distrust": {
+        "name": "Healthy Distrust",
+        "key": "healthy_distrust",
+        "description": "Whenever the unclean magic wielded by mortal men causes you to Defy Danger, treat any result of 6- as a 7-9",
         "classes": [
             "druid"
         ]
