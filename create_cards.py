@@ -8,6 +8,8 @@ import re
 DATA_FILE = "data.json"
 CARDS_OUTPUT = "cards.json"
 
+color = "DimGray"
+
 # Check existance of files
 if not isfile(DATA_FILE):
     err(DATA_FILE, "not found!")
@@ -75,7 +77,7 @@ def format_move_description(description):
             return "bullet | " + line[2:]
         elif line.startswith("-> "):
             return "bullet | " + line[3:]
-        elif line.startswith("Wirf"):
+        elif line.startswith("Wurf"):
             return "section | " + line
         elif line == "fill()":
             return "fill"
@@ -87,7 +89,7 @@ def format_move_description(description):
     lines = map(prefix, lines)
     final = []
     for line in lines:
-        if line.startswith("section | Wirf"):
+        if line.startswith("section | Wurf"):
             final.append("fill")
         # Replace id(move_id) with the name of move_id
         line = re.sub(r"id\((.*?)\)",
@@ -147,7 +149,7 @@ def add_moves_from_class(cards, cl):
                 "title_size": calculate_title_size(move["name"]),
                 "count": 1,
                 "icon": class_to_icon(cl),
-                "color": "DimGray",
+                "color": color,
                 "contents": [
                     "subtitle | " + class_to_name(cl) + " (Rasse)",
                     "rule"
@@ -168,7 +170,7 @@ def add_moves_from_class(cards, cl):
                 "title_size": calculate_title_size(move["name"]),
                 "count": 1,
                 "icon": class_to_icon(cl),
-                "color": "DimGray",
+                "color": color,
                 "contents": [
                     "subtitle | " + class_to_name(cl) + " (Level 0)",
                     "rule"
@@ -190,7 +192,7 @@ def add_moves_from_class(cards, cl):
                 "title_size": calculate_title_size(move["name"]),
                 "count": 1,
                 "icon": class_to_icon(cl),
-                "color": "DimGray",
+                "color": color,
                 "contents": [
                     "subtitle | " + class_to_name(cl) + " (Level 2)",
                     "rule"
@@ -233,7 +235,7 @@ def add_moves_from_class(cards, cl):
                 "title_size": calculate_title_size(move["name"]),
                 "count": 1,
                 "icon": class_to_icon(cl),
-                "color": "DimGray",
+                "color": color,
                 "contents": [
                     "subtitle | " + class_to_name(cl) + " (Level 6)",
                     "rule"
@@ -282,7 +284,7 @@ def add_moves_from_class(cards, cl):
             "title_size": calculate_title_size(move["name"]),
             "count": 1,
             "icon": "artificial-intelligence",
-            "color": "DimGray",
+            "color": color,
             "contents": [
                 "subtitle | Aktion",
                 "rule"
@@ -310,14 +312,13 @@ def add_moves_from_class(cards, cl):
             "title_size": calculate_title_size(move["name"]),
             "count": 1,
             "icon": "artificial-intelligence",
-            "color": "DimGray",
+            "color": color,
             "contents": [
                 "subtitle | Spezial-Aktion",
                 "rule"
             ] + format_move_description(move["description"])
         }
         cards.append(card)
-
 
 
 
