@@ -5153,8 +5153,7 @@
                     "description": "You teleport a creature to your presence. Name a creature or give a short description of a type of creature. If you named a creature, that creature appears before you. If you described a type of creature, a creature of that type appears before you.",
                     "key": "perfect_summons",
                     "name": "Perfect Summons"
-                },
-                "key": "spells"
+                }
             }
         }
     ],
@@ -8599,8 +8598,7 @@
                     "description": "You teleport a creature to your presence. Name a creature or give a short description of a type of creature. If you named a creature, that creature appears before you. If you described a type of creature, a creature of that type appears before you.",
                     "key": "perfect_summons",
                     "name": "Perfect Summons"
-                },
-                "key": "spells"
+                }
             }
         }
     },
