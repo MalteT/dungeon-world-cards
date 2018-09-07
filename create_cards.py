@@ -61,11 +61,11 @@ def key_to_move(key):
 # Calculate the title size for a given title
 # TODO Could use some improvements
 def calculate_title_size(title):
-    if len(title) > 25:
+    if len(title) >= 25:
         return "10"
-    if len(title) > 22:
+    if len(title) >= 22:
         return "11"
-    if len(title) > 20:
+    if len(title) >= 20:
         return "12"
     return "13"
 
