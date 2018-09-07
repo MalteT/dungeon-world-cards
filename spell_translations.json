@@ -1,12 +1,42 @@
 {
-    "names": {},
     "descriptions": {},
+    "names": {
+        "alarm": "Alarm",
+        "antipathy": "Antipathie",
+        "cage": "K\u00e4fig",
+        "charm_person": "Bezaubernder Charm",
+        "cloudkill": "Nebeltot",
+        "contact_other_plane": "Interplanarer Kontakt",
+        "contact_spirits": "S\u00e9ance",
+        "contingency": "Kontingenz",
+        "detect_magic": "Magiegesp\u00fcr",
+        "dispel_magic": "Bannbrecher",
+        "dominate": "Dominanz",
+        "fireball": "Feuerball",
+        "invisibility": "Unsichtbarkeit",
+        "light": "Licht",
+        "magic_missile": "Magischer Schuss",
+        "mimic": "Mimikry",
+        "mirror_image": "Spiegelbild",
+        "perfect_summons": "Perfekte Beschw\u00f6rung",
+        "polymorph": "Polymorph",
+        "prestidigitation": "Taschenspielerei",
+        "shadow_walk": "Schattengang",
+        "shelter": "Zuflucht",
+        "sleep": "Schlaf",
+        "soul_gem": "Seelenstein",
+        "summon_monster": "Beschw\u00f6ren",
+        "telepathy": "Telepathie",
+        "true_seeing": "Wahre Sicht",
+        "unseen_servant": "Unsichtbarer Diener",
+        "visions_through_time": "Wahrsager"
+    },
     "tags": {
         "divination": "Prophezeihung",
         "enchantment": "Verzauberung",
         "evocation": "Erweckung",
         "illusion": "Illusion",
         "ongoing": "Anhaltend",
-        "summoning": "Beschwörung"
+        "summoning": "Beschw\u00f6rung"
     }
 }
